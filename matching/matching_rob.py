@@ -1,7 +1,7 @@
 def inputthings(): 
     i = input()
     if i.startswith("#"):
-        inputthings()
+        return inputthings()
     return i
 
 n = int(inputthings().split("=")[1])
@@ -14,20 +14,32 @@ for _ in range(2*n):
     
 input()
 
-proposers = list()
-non_proposers = list()
+proposers = dict()
+non_proposers = dict()
 
 for x in range(2*n):
+    ratingdict = dict()
     y = input().split(": ")
+    int_id = int(y[0])
     temp_dict = dict()
-    temp_dict[y[0]] = list(map(int,(y[1]).split(" "))) # e.g. [1: 2,4]
-    if x % 2 == 0:
-        proposers.append(temp_dict)
+    int_pref = list(map(int,y[1].split(" "))) # e.g. [1: 2,4]
+    if int(y[0]) % 2 == 0:
+        for counter, i in enumerate(int_pref):
+            ratingdict[i] = counter            
+        non_proposers[y[0]] = ratingdict
     else:
-        non_proposers.append(temp_dict)
+        proposers[y[0]] = int_pref
 
+def GetOddNumbers(n):
+    temp = list()
+    for x in range(n):
+        temp.append(x*2+1)
+    return temp
+
+proposer_indexes = GetOddNumbers(n)
+
+print(proposer_indexes)
 print(proposers)
-# proposers [[1: 2,4], [2: 3,1]]
-# non_proposers [[3: 4,2], [4: 1,3]]
-# for x in proposers:
-#     while()
+print(non_proposers)
+# proposers {'1': [2, 4], '3': [4, 2]}
+# non_proposers {'2': {3: 0, 1: 1}, '4': {1: 0, 3: 1}}
