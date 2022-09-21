@@ -23,17 +23,29 @@ def getarray():
 
 def rec(list):
     if(len(list) == 2):
-        return euclid(list[0], list[1])
+        return (euclid(list[0], list[1]), (list[0], list[1]))
     elif(len(list) < 2):
-        return -1
+        return (-1, (-1,-1))
     else:
         firstHalf, secondHalf = list[:(len(list)//2)],list[(len(list)//2):]
-        bestLeft = rec(firstHalf)
-        bestRight = rec(secondHalf)
+        (bestLeft, pointsLeft) = rec(firstHalf)
+        
+        (bestRight, pointsRight) = rec(secondHalf)
+
         if (bestLeft >= 0 and bestRight >= 0):
-            best = min(bestLeft, bestRight)
+            if (bestLeft < bestRight):
+                best = bestLeft
+                bestPoints = pointsLeft
+            else:
+                best = bestRight
+                bestPoints = pointsRight
         else:
-            best = max(bestLeft, bestRight)
+            if (bestLeft > bestRight):
+                best = bestLeft
+                bestPoints = pointsLeft
+            else:
+                best = bestRight
+                bestPoints = pointsRight
 
         yList = createYList(firstHalf, secondHalf, best)
         yList.sort(key=lambda x:x[1])
@@ -42,10 +54,13 @@ def rec(list):
         for i in range(size):
             j = i + 1
             while j < size and (yList[j][1] - yList[i][1]) < best:
-                best = euclid(yList[i], yList[j])
+                newBest = euclid(yList[j], yList[i])
+                if (newBest < best):
+                    best = newBest
+                    bestPoints = (yList[i], yList[j])
                 j += 1
     
-        return best
+        return (best, bestPoints)
 
 def euclid(p1, p2):
     (x1, y1) = p1
@@ -57,7 +72,7 @@ def createYList(L1, L2, dist):
     
     len1 = len(L1)
     len2 = len(L2)
-    mid = L1[len1-1][0] + (euclid(((L1[len1-1][0]), 0), (L2[0][0], 0)))/2
+    mid = (L1[len1-1][0] + L2[0][0])/2
     for i in range(len1):
         if (abs( mid - L1[len1-1-i][0]) > dist):
             continue
@@ -68,9 +83,10 @@ def createYList(L1, L2, dist):
         if (abs(L2[i][0] - mid) > dist):
             continue
         else:
-            newList.append(L2[len1-1-i])
+            newList.append(L2[i])
 
     return newList
+
 
             
     
@@ -86,7 +102,12 @@ for v in input:
 
 cl.sort(key=lambda x:x[0])
 
-print(str(rec(cl)))
+result, resultPoints = rec(cl)
+(x1, y1) = resultPoints[0]
+(x2, y2) = resultPoints[1]
+
+print(str(result))
+print(str(x1) + " " + str(y1) + " " + str(x2) + " " + str(y2))
 
 
 

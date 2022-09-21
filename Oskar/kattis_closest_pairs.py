@@ -32,8 +32,10 @@ def rec(list):
         for i in range(size):
             j = i + 1
             while j < size and (yList[j][1] - yList[i][1]) < best:
-                best = euclid(yList[i], yList[j])
-                bestPoints = (yList[i], yList[j])
+                newBest = euclid(yList[j], yList[i])
+                if (newBest < best):
+                    best = newBest
+                    bestPoints = (yList[i], yList[j])
                 j += 1
     
         return (best, bestPoints)
@@ -59,7 +61,7 @@ def createYList(L1, L2, dist):
         if (abs(L2[i][0] - mid) > dist):
             continue
         else:
-            newList.append(L2[len1-1-i])
+            newList.append(L2[i])
 
     return newList
 
