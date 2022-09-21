@@ -1,6 +1,6 @@
 from math import sqrt
 import sys
-
+# --- Used to read imputs ------
 def readall():
     v = input()
     try:
@@ -21,7 +21,10 @@ def getarray():
         all = all[:-1]
     return all
 
-def rec(list):
+# ---- end of Used to read inputs ----
+
+
+def rec(list): # Runs O(N)
     if(len(list) == 2):
         return (euclid(list[0], list[1]), (list[0], list[1]))
     elif(len(list) < 2):
@@ -48,12 +51,12 @@ def rec(list):
                 bestPoints = pointsRight
 
         yList = createYList(firstHalf, secondHalf, best)
-        yList.sort(key=lambda x:x[1])
+        yList.sort(key=lambda x:x[1]) # O(N log N)
         
         size = len(yList)
-        for i in range(size):
+        for i in range(size): # O(N)
             j = i + 1
-            while j < size and (yList[j][1] - yList[i][1]) < best:
+            while j-i < 15 and j < size and (yList[j][1] - yList[i][1]) < best: # for the explanaition of the constant 15 look at statement 5.10 in the book.
                 newBest = euclid(yList[j], yList[i])
                 if (newBest < best):
                     best = newBest
