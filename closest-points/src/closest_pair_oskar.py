@@ -25,6 +25,8 @@ def getarray():
 
 
 def rec(list): # Runs O(N)
+    
+    # -- devide part ----
     if(len(list) == 2):
         return (euclid(list[0], list[1]), (list[0], list[1]))
     elif(len(list) < 2):
@@ -50,6 +52,8 @@ def rec(list): # Runs O(N)
                 best = bestRight
                 bestPoints = pointsRight
 
+                
+        # --- conquer part ----
         yList = createYList(firstHalf, secondHalf, best)
         yList.sort(key=lambda x:x[1]) # O(N log N)
         
