@@ -1,4 +1,5 @@
-import sys
+import math
+from xmlrpc.client import MAXINT
 
 def readall():
     v = input()
@@ -26,20 +27,25 @@ ctn = dict()
 cl = list()
 for v in input:
     vl = v.split(maxsplit=1)
-    print(vl)
     n = vl[0]
     c = tuple(map(float, vl[1].split()))
     ctn[c] = n
     cl.append(c)
 
-cl.sort(key=lambda x:x[0])
-firstHalf, secondHalf = cl[:(len(cl)//2)],cl[(len(cl)//2):]
-print("Below is the first half sorted:")
-print(firstHalf)
-print("")
-print("Below is the second half sorted:")
-print(secondHalf)
-print("")
+def euclid(p1, p2):
+    (x1, y1) = p1
+    (x2, y2) = p2
+    return math.sqrt((x2-x1)**2+(y2-y1)**2)
+best = MAXINT
+points = None
+for i, p1 in enumerate(cl):
+    for p2 in cl[:i]:
+        dist = euclid(p1,p2)
+        if dist < best:
+            best = dist
+            points = (p1, p2)
+
+print(best, points)
 
 
 
