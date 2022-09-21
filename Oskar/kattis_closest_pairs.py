@@ -1,39 +1,29 @@
 from math import sqrt
 import sys
 
-def readall():
-    v = input()
-    try:
-        while True:
-            v += "\n" + input().strip()
-    except EOFError:
-        return v
-
-
-def getarray():
-    all = readall().split("\n")
-    if ":" in all[0]:
-        d = 1
-        while all[d] != "NODE_COORD_SECTION":
-            d += 1
-        all = all[d+1:]
-    while all[-1] == "EOF" or all[-1] == '':
-        all = all[:-1]
-    return all
-
 def rec(list):
     if(len(list) == 2):
-        return euclid(list[0], list[1])
+        return (euclid(list[0], list[1]), (list[0], list[1]))
     elif(len(list) < 2):
-        return -1
+        return (-1, (-1,-1))
     else:
         firstHalf, secondHalf = list[:(len(list)//2)],list[(len(list)//2):]
-        bestLeft = rec(firstHalf)
-        bestRight = rec(secondHalf)
+        (bestLeft, pointsLeft) = rec(firstHalf)
+        (bestRight, pointsRight) = rec(secondHalf)
         if (bestLeft >= 0 and bestRight >= 0):
-            best = min(bestLeft, bestRight)
+            if (bestLeft < bestRight):
+                best = bestLeft
+                bestPoints = pointsLeft
+            else:
+                best = bestRight
+                bestPoints = pointsRight
         else:
-            best = max(bestLeft, bestRight)
+            if (bestLeft > bestRight):
+                best = bestLeft
+                bestPoints = pointsLeft
+            else:
+                best = bestRight
+                bestPoints = pointsRight
 
         yList = createYList(firstHalf, secondHalf, best)
         yList.sort(key=lambda x:x[1])
@@ -43,9 +33,10 @@ def rec(list):
             j = i + 1
             while j < size and (yList[j][1] - yList[i][1]) < best:
                 best = euclid(yList[i], yList[j])
+                bestPoints = (yList[i], yList[j])
                 j += 1
     
-        return best
+        return (best, bestPoints)
 
 def euclid(p1, p2):
     (x1, y1) = p1
@@ -72,24 +63,17 @@ def createYList(L1, L2, dist):
 
     return newList
 
-            
-    
-input = getarray()
-ctn = dict()
-cl = list()
-for v in input:
-    vl = v.split(maxsplit=1)
-    n = vl[0]
-    c = tuple(map(float, vl[1].split()))
-    ctn[c] = n
-    cl.append(c)
 
-cl.sort(key=lambda x:x[0])
-
-print(str(rec(cl)))
-
-
-
-
-
-
+while(True):
+    n = int(input())
+    if (n==0):
+        break
+    points = []
+    for i in range(n):
+        x, y = map(float, input().split())
+        points.append((x, y))
+    points.sort(key=lambda x:x[0])
+    resultPoints = rec(points)[1]
+    (x1, y1) = resultPoints[0]
+    (x2, y2) = resultPoints[1]
+    print(str(x1) + " " + str(y1) + " " + str(x2) + " " + str(y2))
