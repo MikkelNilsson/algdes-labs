@@ -20,6 +20,4 @@ def inputProtein():
         return proteinstrings
 
 
-print(inputProtein())
-
 
