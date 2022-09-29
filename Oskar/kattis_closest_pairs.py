@@ -26,12 +26,12 @@ def rec(list):
                 bestPoints = pointsRight
 
         yList = createYList(firstHalf, secondHalf, best)
-        yList.sort(key=lambda x:x[1])
+        yList.sort(key=lambda x:x[1]) # O(N log N)
         
         size = len(yList)
-        for i in range(size):
+        for i in range(size): # O(N)
             j = i + 1
-            while j < size and (yList[j][1] - yList[i][1]) < best:
+            while j-i < 15 and j < size and (yList[j][1] - yList[i][1]) < best: # for the explanaition of the constant 15 look at statement 5.10 in the book.
                 newBest = euclid(yList[j], yList[i])
                 if (newBest < best):
                     best = newBest
