@@ -1,4 +1,3 @@
-package Oskar;
 
 import java.util.Scanner;
 
