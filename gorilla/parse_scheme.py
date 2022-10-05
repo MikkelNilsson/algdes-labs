@@ -1,5 +1,5 @@
 def getcost():
-    f = open("./data/BLOSUM62.txt", "r")
+    f = open(".\data\BLOSUM62.txt", "r")
 
     for i in range(6):
         f.readline()
