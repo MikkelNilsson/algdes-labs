@@ -1,5 +1,5 @@
 
-import math
+INF = 10**6
 
 
 def parseRails():
@@ -13,7 +13,7 @@ def parseRails():
     for _ in range(nrarcs):
         u, v, c = map(int, input().split(" "))
         if c == -1: 
-            c = math.inf
+            c = INF
         arcs[u][v] = c
         arcs[v][u] = c
 
