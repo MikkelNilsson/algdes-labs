@@ -67,6 +67,9 @@ for s, t in zero_edges:
         res.append((s, t, int(graph[t][s]/2)))
 
 res = sorted(res, key=lambda x: x[0])
-
+sum = 0
 for s, t, c in res:
     print(s, t, c)
+    sum += c
+
+print(str(sum))
