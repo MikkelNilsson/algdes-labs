@@ -1,5 +1,6 @@
 from queue import Queue
 import math
+from IndexMinPQ import IndexedMinPQ
 
 n, m, r = map(int, input().split())
 s, t = input().split()
@@ -36,7 +37,7 @@ for i in range(m):
         adj[nameToIndex[v]].append(nameToIndex[u])
         
 
-def bfs(start):
+def bfs(start, toUseAdj):
     d = [math.inf]*n
     distance = 0
     queue = Queue(m)
@@ -46,47 +47,92 @@ def bfs(start):
         a = queue.get()
         distance = a[1]+1
         print(a[0])
-        for elem in adj[a[0]]:
+        for elem in toUseAdj[a[0]]:
             if d[elem] == math.inf:
                 queue.put((elem, distance))
                 d[elem] = distance
     return d
 
 
+
+def dijkstra(start, toUseAdj):
+    edgeTo = [None]*n
+    distTo = [math.inf]*n
+    pq = IndexedMinPQ(n)
+    distTo[start] = 0
+
+    pq.insert(start, 0)
+    while not pq.isEmpty():
+        v = pq.deleteMin()
+        for w, weight in toUseAdj[v]:
+            if (distTo[w] > distTo[v] + weight):
+                distTo[w] = distTo[v] + weight
+                edgeTo[w] = v
+                if (pq.contains(w)):
+                    pq.decreaseKey(w, distTo[w])
+                else:
+                    pq.insert(w, distTo[w])
+    
+    return distTo
+
+
+def few(start, terminal):
+    tmpadj = adj.copy()
+    for i in range(n):
+        alternateList = []
+        for a in tmpadj[i]:
+            if isRed[a]:
+                alternateList.append((a, 1))
+            else:
+                alternateList.append((a, 0))
+        tmpadj[i] = alternateList
+    
+    dist = dijkstra(start, tmpadj)  
+    print("Few")   
+    print(tmpadj)
+    print(dist)
+    print()
+
+    if isRed[start]:
+        return dist[terminal]
+    else:
+        return dist[terminal]
+
+
+
+
 def none(start, terminal):
-    for a in adj[start]:
+    tmpadj = adj.copy()
+    for a in tmpadj[start]:
         if a == terminal:
             return 1
     else:
         for i in range(n):
             if isRed[i]:
-                adj[i] = []
+                tmpadj[i] = []
         
-    dist = bfs(start)  
+    dist = bfs(start, tmpadj)  
     print("None")   
-    print(adj)
+    print(tmpadj)
     print(dist)
     print()
 
     return dist[terminal]
 
 
-def alternate(start, terminal):
-    print("Before alternate")   
-    print(adj)
-    print()
-    
+def alternate(start, terminal):   
+    tmpadj = adj.copy() 
     for i in range(n):
         alternateList = []
-        for a in adj[i]:
+        for a in tmpadj[i]:
             if isRed[i] != isRed[a]:
                 alternateList.append(a)
-        adj[i] = alternateList
+        tmpadj[i] = alternateList
     
-    result = bfs(start)
+    result = bfs(start, tmpadj)
 
     print("Alternate")   
-    print(adj)
+    print(tmpadj)
     print(result)
     print()
 
@@ -96,10 +142,18 @@ def alternate(start, terminal):
         return False
 
 
-distt = alternate(nameToIndex[s], nameToIndex[t]) 
+noneResult = none(nameToIndex[s], nameToIndex[t]) 
+alternateResult = alternate(nameToIndex[s], nameToIndex[t]) 
+fewResult = few(nameToIndex[s], nameToIndex[t]) 
+
+
+print("Not Alternate")   
+print(adj)
+print()
 
 
 
 
-
-print("result", str(distt))
+print("result of none:", str(noneResult))
+print("result of alternate:", str(alternateResult))
+print("result of few:", str(fewResult))

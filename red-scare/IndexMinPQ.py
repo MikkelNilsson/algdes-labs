@@ -33,7 +33,7 @@ class IndexedMinPQ:
 
     def deleteMin(self):
         if not self.isEmpty():
-            out = self.key[self.pq[1]]
+            out = self.pq[1]
             self.key[self.pq[1]] = None
             self.qp[self.pq[1]] = None
             self.pq[1] = self.pq[self.total]
@@ -82,3 +82,9 @@ class IndexedMinPQ:
         assert key > self.key[i]
         self.key[i] = key
         self.__sink(self.qp[i])
+
+    def contains(self, i):
+        if self.key[i] is None:
+            return False
+        else: 
+            return True
