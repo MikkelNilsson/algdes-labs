@@ -1,6 +1,7 @@
 from queue import Queue
 import math
 from IndexMinPQ import IndexedMinPQ
+import ford_fulkerson
 from os import listdir
 
 def run(fileName):
@@ -10,14 +11,17 @@ def run(fileName):
 
         adj = dict()
         isRed = dict()
+        red = set()
         nameToIndex = dict()
         indexToName = dict()
+        directed = False
 
         for i in range(n):
             tmpLine = f.readline().strip()
             if tmpLine.__contains__("*"):
                 name, color = tmpLine.split()
                 isRed[i] = True
+                red.add(i)
                 adj[i] = list()
                 nameToIndex[name] = i
                 indexToName[i] = name
@@ -27,7 +31,7 @@ def run(fileName):
                 nameToIndex[tmpLine] = i
                 indexToName[i] = tmpLine
 
-
+        
         for i in range(m):
             tmpLine = f.readline()
             tmpList = tmpLine.split()
@@ -35,6 +39,7 @@ def run(fileName):
             v = tmpList[-1]
             if tmpLine.__contains__(">"):
                 adj[nameToIndex[u]].append(nameToIndex[v])
+                directed = True
             else:
                 adj[nameToIndex[u]].append(nameToIndex[v])
                 adj[nameToIndex[v]].append(nameToIndex[u])
@@ -198,6 +203,30 @@ def run(fileName):
             else: 
                 return False
 
+        def some(start, terminal):
+            if directed:
+                print("Graph is directed, and Some can therefore not be solved.")
+                return False
+            
+            some_adj = adj.copy()
+            for i in range(n):
+                alternateList = []
+                for a in some_adj[i]:
+                    alternateList.append((a, 1))
+                some_adj[i] = dict(alternateList)
+
+            some_adj[n] = {start: 1, terminal: 1}
+            some_adj[start][n] = 1
+            some_adj[terminal][n] = 1
+                
+            for vr in red:
+                if ford_fulkerson.run_ff_bfs(some_adj, n + 1, n, vr) == 2:
+                    return True
+            
+            return False
+                
+
+
 
         noneResult = none(nameToIndex[s], nameToIndex[t]) 
         print("result of none:", str(noneResult))
@@ -207,8 +236,13 @@ def run(fileName):
         print("result of few:", str(fewResult))
         manyResult = many(nameToIndex[s], nameToIndex[t])
         print("result of many:", str(manyResult))
+        someResult = some(nameToIndex[s], nameToIndex[t])
+        print("result of Some:", someResult)
         print()
 
+        if fewResult > 0 and not someResult:
+            print("\nERRROROROROORORORO\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+            
 
         """print("Not Alternate")   
         print(adj)
