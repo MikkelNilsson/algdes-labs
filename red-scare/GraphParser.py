@@ -3,6 +3,7 @@ import math
 from IndexMinPQ import IndexedMinPQ
 import ford_fulkerson
 from os import listdir
+import copy
 
 def run(fileName):
     with open("data\\" + fileName) as f:
@@ -83,7 +84,7 @@ def run(fileName):
             return True
 
 
-        def dijkstra(start, toUseAdj):
+        def dijkstra(start, toUseAdj, terminal):
             edgeTo = [None]*n
             distTo = [math.inf]*n
             pq = IndexedMinPQ(n)
@@ -115,18 +116,18 @@ def run(fileName):
                         alternateList.append((a, 0))
                 tmpadj[i] = alternateList
             
-            dist = dijkstra(start, tmpadj)  
+            dist = dijkstra(start, tmpadj, terminal)  
             
             if dist[terminal] == math.inf:
                 return -1
             elif isRed[start]:
-                return dist[terminal]
+                return dist[terminal] + 1
             else:
                 return dist[terminal]
 
 
         def findMany(start, terminal, toUseAdj, mem):
-            max = - math.inf
+            max = -math.inf
             if start == terminal:
                 return 0
             elif mem[start] != math.inf:
@@ -208,21 +209,22 @@ def run(fileName):
                 print("Graph is directed, and Some can therefore not be solved.")
                 return False
             
-            some_adj = adj.copy()
+            some_adj = dict()
             for i in range(n):
                 alternateList = []
-                for a in some_adj[i]:
-                    alternateList.append((a, 1))
-                some_adj[i] = dict(alternateList)
+                some_adj[i] = dict()
+                for a in adj[i]:
+                    some_adj[i][a] = 1
 
             some_adj[n] = {start: 1, terminal: 1}
             some_adj[start][n] = 1
             some_adj[terminal][n] = 1
                 
             for vr in red:
-                if ford_fulkerson.run_ff_bfs(some_adj, n + 1, n, vr) == 2:
+                ff_adj = copy.deepcopy(some_adj)
+                if ford_fulkerson.run_ff_bfs(ff_adj, n + 1, n, vr) == 2:
                     return True
-            
+
             return False
                 
 
@@ -240,7 +242,7 @@ def run(fileName):
         print("result of Some:", someResult)
         print()
 
-        if fewResult > 0 and not someResult:
+        if fewResult > 0 and not someResult and not directed:
             print("\nERRROROROROORORORO\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
             
 
@@ -256,3 +258,4 @@ for inp in inputList:
     if inp != "README.md":
         print(inp)
         run(inp)
+    
